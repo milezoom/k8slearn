@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: configmap-hellosvc
+  namespace: default
+data:
+  LOG_LEVEL: "info"

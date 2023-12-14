@@ -1,0 +1,16 @@
+syntax = "proto3";
+package hellosvc;
+
+option go_package = "hellosvc/contract";
+
+service HelloService {
+    rpc PrintHello(PrintHelloRequest) returns (PrintHelloResponse);
+}
+
+message PrintHelloRequest {
+    string name = 1;
+}
+
+message PrintHelloResponse {
+    string message = 1;
+}

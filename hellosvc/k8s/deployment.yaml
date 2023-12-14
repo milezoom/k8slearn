@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hellosvc
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: hellosvc
+  template:
+    metadata:
+      labels:
+        app: hellosvc
+      annotations:
+        configmap.reloader.statetaker.com/reload: "configmap-hellosvc"
+        secret.reloader.statetaker.com/reload: "secret-hellosvc"
+    spec:
+      containers:
+        - name: hellosvc
+          image: 10.88.0.2:5000/hellosvc:1.0.1
+          imagePullPolicy: IfNotPresent
+          readinessProbe:
+            exec:
+              command:
+                - /grpc_health_probe
+                - -addr=:6001
+            initialDelaySeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+            periodSeconds: 3
+          livenessProbe:
+            exec:
+              command:
+                - /grpc_health_probe
+                - -addr=:6001
+            initialDelaySeconds: 30
+            failureThreshold: 1
+            successThreshold: 1
+            periodSeconds: 10
+          env:
+            - name: APP_NAME
+              value: hellosvc
+            - name: GRPC_PORT
+              value: "6001"
+            - name: REST_PORT
+              value: "8001"
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-hellosvc
+                  key: LOG_LEVEL

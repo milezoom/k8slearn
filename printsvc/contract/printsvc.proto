@@ -1,0 +1,14 @@
+syntax = "proto3";
+package printsvc;
+
+option go_package = "printsvc/contract";
+
+service PrintService {
+    rpc PrintGreeting(EmptyRequest) returns (PrintGreetingResponse);
+}
+
+message EmptyRequest {}
+
+message PrintGreetingResponse {
+    string message = 1;
+}

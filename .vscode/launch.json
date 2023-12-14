@@ -1,0 +1,21 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "hellosvc",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/hellosvc/main.go",
+      "envFile": "${workspaceFolder}/hellosvc/.env"
+    },
+    {
+      "name": "printsvc",
+      "type": "go",
+      "request": "launch",
+      "mode": "auto",
+      "program": "${workspaceFolder}/printsvc/main.go",
+      "envFile": "${workspaceFolder}/printsvc/.env"
+    }
+  ]
+}

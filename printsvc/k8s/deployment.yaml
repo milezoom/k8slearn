@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: printsvc
+  namespace: default
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: printsvc
+  template:
+    metadata:
+      labels:
+        app: printsvc
+      annotations:
+        configmap.reloader.statetaker.com/reload: "configmap-printsvc"
+        secret.reloader.statetaker.com/reload: "secret-printsvc"
+    spec:
+      containers:
+        - name: printsvc
+          image: 10.88.0.2:5000/printsvc:1.0.3
+          imagePullPolicy: IfNotPresent
+          readinessProbe:
+            exec:
+              command:
+                - /grpc_health_probe
+                - -addr=:6002
+            initialDelaySeconds: 5
+            failureThreshold: 3
+            successThreshold: 1
+            periodSeconds: 3
+          livenessProbe:
+            exec:
+              command:
+                - /grpc_health_probe
+                - -addr=:6002
+            initialDelaySeconds: 30
+            failureThreshold: 1
+            successThreshold: 1
+            periodSeconds: 10
+          env:
+            - name: APP_NAME
+              value: "printsvc"
+            - name: GRPC_PORT
+              value: "6002"
+            - name: REST_PORT
+              value: "8002"
+            - name: LOG_LEVEL
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-printsvc
+                  key: LOG_LEVEL
+
+            - name: HELLOSVC_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-printsvc
+                  key: HELLOSVC_HOST
+            - name: HELLOSVC_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: configmap-printsvc
+                  key: HELLOSVC_PORT
